@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: [true, "Account with given email already exists!"],
     required: [true, "You need to provide an email."],
     maxLength: [100, "You can't have a email longer than 100 characters."],
     validate: {

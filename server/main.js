@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 const {port, mongoUrl} = require("./config/env");
 const apiRoutes = require('./routes/api');
@@ -15,6 +16,9 @@ mongoose.connection.on('error', console.error.bind(console, 'connection error:')
 mongoose.connection.once('open', () => console.log("Successfully connected to MongoDB!"));
 
 app.use(express.json());
+
+require('./config/passport');
+app.use(passport.initialize());
 
 app.use('/api', apiRoutes);
 
