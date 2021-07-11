@@ -21,5 +21,6 @@ require('./config/passport');
 app.use(passport.initialize());
 
 app.use('/api', apiRoutes);
+app.use('/api/uploads', express.static('uploads'));
 
 app.listen(port, () => console.log(`Server started on port ${port}.`));
