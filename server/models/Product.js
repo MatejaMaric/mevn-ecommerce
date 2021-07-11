@@ -12,7 +12,7 @@ const ProductSchema = new mongoose.Schema({
   },
   imagePath: {
     type: String,
-    required: false,
+    default: "uploads/no-image.png",
     maxLength: [256, "Product's image path can't have more then 256 characters."]
   },
   price: {
