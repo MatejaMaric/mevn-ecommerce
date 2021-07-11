@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const passport = require('passport');
+const cors = require('cors');
 
 const {port, mongoUrl} = require("./config/env");
 const apiRoutes = require('./routes/api');
@@ -19,6 +20,8 @@ app.use(express.json());
 
 require('./config/passport');
 app.use(passport.initialize());
+
+app.use(cors());
 
 app.use('/api', apiRoutes);
 app.use('/api/uploads', express.static('uploads'));
