@@ -1,23 +1,62 @@
+const Product = require('../models/Product');
+
 module.exports = {
 
-  index(req, res) {
-    res.json({products: "index"});
+  async index(req, res) {
+    const posts = await Product.find({}, '_id name imagePath price');
+    res.json(posts);
   },
 
-  show(req, res) {
-    res.json({products: "show"});
+  async show(req, res) {
+    const post = await Product.findOne({_id: req.params.id}, '_id name description imagePath price');
+    res.json(post);
   },
 
   store(req, res) {
-    res.json({products: "store"});
+    let newProductObj = {
+      name: req.body.name,
+      description: req.body.description,
+      //imagePath: null,
+      price: req.body.price
+    };
+    if (req.file)
+      newProductObj.imagePath = req.file.path;
+
+    const newProduct = new Product(newProductObj);
+    newProduct.save()
+      .then(() => res.json({status: "Product successfully added!"}))
+      .catch(error => res.json({
+        status: "Couldn't add product!",
+        error
+      }));
   },
 
   update(req, res) {
-    res.json({products: "update"});
+    let updatedProduct = {
+      name: req.body.name,
+      description: req.body.description,
+      //imagePath: null,
+      price: req.body.price
+    };
+
+    if (req.file)
+      updatedProduct.imagePath = req.file.path;
+
+    Product.findOneAndUpdate({_id: req.params.id}, {$set: updatedProduct}, {new: true}, (error, product) => {
+      if (error)
+        res.json({status: "Couldn't update product!", error});
+      else
+        res.json({status: "Successfully updated product!", product});
+    });
   },
 
   destroy(req, res) {
-    res.json({products: "destroy"});
-  },
+    Product.findByIdAndRemove(req.params.id, (error, product) => {
+      if (error)
+        res.json({status: "Error when removing product!", error});
+      else
+        res.json({status: "Product successfully removed!", product})
+    });
+  }
 
 };
