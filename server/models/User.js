@@ -34,6 +34,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "You need to provide a password."],
   },
+  admin: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const UserModel = new mongoose.model('User', UserSchema);
