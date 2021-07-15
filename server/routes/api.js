@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userController = require('../controllers/user');
 const productsController = require('../controllers/products');
+const transactionController = require('../controllers/transaction');
 
 const {isAuth, isAdmin, upload} = require('../lib/middleware');
 
@@ -15,5 +16,8 @@ router.get('/products/:id', productsController.show);
 router.post('/products', isAuth, isAdmin, upload.single('image'), productsController.store);
 router.patch('/products/:id', isAuth, isAdmin, upload.single('image'), productsController.update);
 router.delete('/products/:id', isAuth, isAdmin, productsController.destroy);
+
+router.post('/transaction/setup', isAuth, transactionController.setup);
+router.get('/transaction/capture', transactionController.capture);
 
 module.exports = router;
