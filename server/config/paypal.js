@@ -8,8 +8,4 @@ function environment() {
     return new paypal.core.SandboxEnvironment(paypalClientId, paypalClientSecret);
 }
 
-function client() {
-  return new paypal.core.PayPalHttpClient(environment());
-}
-
-module.exports = client;
+module.exports = new paypal.core.PayPalHttpClient(environment());
