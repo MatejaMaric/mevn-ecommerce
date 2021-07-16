@@ -1,47 +1,66 @@
 const paypal = require('@paypal/checkout-server-sdk');
 const paypalClient = require('../config/paypal');
 const {siteUrl} = require('../config/env');
+const Product = require('../models/Product');
 
 module.exports = {
 
   async setup(req, res) {
-    let transactionData = {
+    let transactionSetupData = {
       intent: 'CAPTURE',
       purchase_units: [{
         amount: {
           currency_code: 'USD',
-          value: '180.00',
+          value: null,
           breakdown: {
             item_total: {
               currency_code: "USD",
-              value: "180.00"
-            },
+              value: null
+            }
           }
         },
-        items: [
-          {
-            name: "T-Shirt",
-            unit_amount: {
-              currency_code: "USD",
-              value: "90.00"
-            },
-            quantity: "1"
-          },
-          {
-            name: "Shoes",
-            unit_amount: {
-              currency_code: "USD",
-              value: "45.00"
-            },
-            quantity: "2"
-          }
-        ]
+        items: []
       }]
     };
 
+    if (!req.body.items)
+      return res.status(400).json({status: "No items given."});
+
+    let totalToPay = 0;
+    for (let i = 0; i < req.body.items.length; i++) {
+      const itemId = req.body.items[i].id;
+
+      const itemQuantity = req.body.items[i].quantity;
+      if (!itemQuantity)
+        return res.status(400).json({status: "No quantity given."});
+
+      let item;
+      try {
+        item = await Product.findOne({_id: itemId});
+      }
+      catch {
+        return res.status(400).json({status: "Couldn't find one of the given items."});
+      }
+      if (!item)
+        return res.status(400).json({status: "Couldn't find one of the given items."});
+
+      transactionSetupData.purchase_units[0].items.push({
+        name: item.name,
+        unit_amount: {
+          currency_code: "USD",
+          value: item.price
+        },
+        quantity: itemQuantity
+      });
+
+      totalToPay += item.price * itemQuantity;
+    }
+    transactionSetupData.purchase_units[0].amount.value = totalToPay;
+    transactionSetupData.purchase_units[0].amount.breakdown.item_total.value = totalToPay;
+
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer("return=representation");
-    request.requestBody(transactionData);
+    request.requestBody(transactionSetupData);
 
     let order;
     try {
@@ -50,7 +69,6 @@ module.exports = {
       console.error(err);
       return res.sendStatus(500);
     }
-    console.log(order);
 
     res.status(200).json({orderId: order.result.id});
   },
