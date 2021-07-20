@@ -8,6 +8,9 @@ module.exports = {
   async setup(req, res) {
     let transactionSetupData = {
       intent: 'CAPTURE',
+      application_context: {
+        brand_name: "MEVN Store"
+      },
       purchase_units: [{
         amount: {
           currency_code: 'USD',
@@ -79,8 +82,13 @@ module.exports = {
 
     try {
       const capture = await paypalClient.execute(request);
+      console.log("CAPTURE======================================================");
       console.log(capture);
+      console.log("CAPTURE.RESULT===============================================");
       console.log(capture.result);
+      console.log("CAPTURE.RESULT.PURCHASE_UNITS[0].SHIPPING====================");
+      console.log(capture.result.purchase_units[0].shipping);
+      console.log("=============================================================");
     } catch (err) {
       console.error(err);
       return res.sendStatus(500);
