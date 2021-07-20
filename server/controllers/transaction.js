@@ -2,10 +2,16 @@ const paypal = require('@paypal/checkout-server-sdk');
 const paypalClient = require('../config/paypal');
 const {siteUrl} = require('../config/env');
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
 module.exports = {
 
   async setup(req, res) {
+    let newOrderObj = {
+      status: 'ordered',
+      paypalOrderId: null,
+      items: []
+    };
     let transactionSetupData = {
       intent: 'CAPTURE',
       application_context: {
@@ -42,7 +48,7 @@ module.exports = {
         item = await Product.findOne({_id: itemId});
       }
       catch {
-        return res.status(400).json({status: "Couldn't find one of the given items."});
+        return res.status(400).json({status: "Couldn't find one of the given items. CB"});
       }
       if (!item)
         return res.status(400).json({status: "Couldn't find one of the given items."});
@@ -57,6 +63,11 @@ module.exports = {
       });
 
       totalToPay += item.price * itemQuantity;
+
+      newOrderObj.items.push({
+        productId: itemId,
+        quantity: itemQuantity
+      });
     }
     transactionSetupData.purchase_units[0].amount.value = totalToPay;
     transactionSetupData.purchase_units[0].amount.breakdown.item_total.value = totalToPay;
@@ -73,28 +84,48 @@ module.exports = {
       return res.sendStatus(500);
     }
 
-    res.status(200).json({orderId: order.result.id});
+    newOrderObj.paypalOrderId = order.result.id;
+
+    const dbOrder = new Order(newOrderObj);
+    dbOrder.save()
+      .then(() => res.status(200).json({orderId: order.result.id}))
+      .catch(err => {
+        res.status(500).json({status: "Couldn't save new order to database!"});
+        console.error(err);
+      });
   },
 
   async capture(req, res) {
+    let dbOrder;
+    try {
+      dbOrder = await Order.findOne({paypalOrderId: req.body.orderId});
+    }
+    catch {
+      return res.status(400).json({status: "Couldn't find given order in database! CB"});
+    }
+    if (!dbOrder)
+      return res.status(400).json({status: "Couldn't find given order in database!"});
+
     const request = new paypal.orders.OrdersCaptureRequest(req.body.orderId);
     request.requestBody({});
 
+    let capture;
     try {
-      const capture = await paypalClient.execute(request);
-      console.log("CAPTURE======================================================");
-      console.log(capture);
-      console.log("CAPTURE.RESULT===============================================");
-      console.log(capture.result);
-      console.log("CAPTURE.RESULT.PURCHASE_UNITS[0].SHIPPING====================");
-      console.log(capture.result.purchase_units[0].shipping);
-      console.log("=============================================================");
+      capture = await paypalClient.execute(request);
     } catch (err) {
       console.error(err);
       return res.sendStatus(500);
     }
 
-    res.sendStatus(200);
+    dbOrder.status = 'paid';
+    dbOrder.shipping = capture.result.purchase_units[0].shipping;
+
+    dbOrder.save()
+      .then(() => res.sendStatus(200))
+      .catch(err => {
+        res.status(500).json({status: "Couldn't update order in database!"})
+        console.error(err);
+      });
   }
 
 };
