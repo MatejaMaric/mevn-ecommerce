@@ -1,9 +1,10 @@
 <template>
   <div class="card">
-    <img :src="productImg" class="card-img-top">
+    <img :src="ImgLink" class="card-img-top">
     <div class="card-body">
-      <h5 class="card-title">{{ productName }}</h5>
-      <a :href="productLink" class="btn btn-dark w-100">Details</a>
+      <h5 class="card-title">{{ Name }}</h5>
+      <p class="card-text">Price: ${{ Price }}</p>
+      <router-link class="btn btn-dark w-100" :to="ProductLink">Details</router-link>
     </div>
   </div>
 </template>
@@ -12,9 +13,18 @@
 export default {
   name: 'ProductCard',
   props: {
-    productName: String,
-    productImg: String,
-    productLink: String
+    Id: String,
+    Name: String,
+    Img: String,
+    Price: Number
+  },
+  computed: {
+    ImgLink() {
+      return `${process.env.VUE_APP_ROOT_API}/${this.Img}`;
+    },
+    ProductLink() {
+      return `/product/${this.Id}`
+    }
   }
 }
 </script>
