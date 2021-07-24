@@ -22,7 +22,7 @@ module.exports = {
           status: "User successfully registered!",
           token: jwt.sign({sub: user._id}, masterKey, {expiresIn: "1d"})
         }))
-        .catch(err => res.json({
+        .catch(err => res.status(400).json({
           status: "Error when registering user!",
           error: err
         }));
