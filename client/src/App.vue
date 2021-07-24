@@ -10,7 +10,10 @@
             <router-link class="nav-link" active-class="active" to="/">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" active-class="active" to="/checkout">Checkout</router-link>
+            <router-link class="nav-link" active-class="active" to="/checkout">
+              Checkout
+              <span class="badge bg-light rounded-pill text-dark" v-text="cartSize"></span>
+            </router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" active-class="active" to="/register">Register</router-link>
@@ -29,7 +32,12 @@
 
 <script>
 export default {
-
+  name: 'Checkout',
+  computed: {
+    cartSize() {
+      return this.$store.getters.getCartSize;
+    }
+  }
 }
 </script>
 
