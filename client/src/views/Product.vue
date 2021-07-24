@@ -46,7 +46,11 @@ export default {
   },
   methods: {
     buy() {
-
+      this.$store.commit('addToCart', {
+        _id: this.$route.params.id,
+        name: this.productName,
+        price: this.productPrice
+      });
     }
   }
 }

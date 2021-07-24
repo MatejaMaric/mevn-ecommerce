@@ -3,16 +3,42 @@ import axios from 'axios';
 
 export default createStore({
   state: {
-    products: []
+    products: [],
+    cart: []
   },
   getters: {
     getProducts(state) {
       return state.products;
+    },
+    getCart(state) {
+      return state.cart;
+    },
+    getCartSize(state) {
+      let sum = 0;
+      state.cart.forEach(x => sum += x.quantity);
+      return sum;
+    },
+    getCartPrice(state) {
+      let sum = 0;
+      state.cart.forEach(x => sum += x.price * x.quantity);
+      return sum;
     }
   },
   mutations: {
     setProducts(state, products) {
       state.products = products;
+    },
+    addToCart(state, product) {
+      let foundProduct = state.cart.find(x => x.id == product._id);
+      if (foundProduct)
+        foundProduct.quantity++;
+      else
+        state.cart.push({
+          id: product._id,
+          name: product.name,
+          price: product.price,
+          quantity: 1
+        });
     }
   },
   actions: {
