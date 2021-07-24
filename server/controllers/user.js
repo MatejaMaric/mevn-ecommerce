@@ -18,7 +18,10 @@ module.exports = {
       });
 
       newUser.save()
-        .then(() => res.json({status: "User successfully registered!"}))
+        .then(user => res.json({
+          status: "User successfully registered!",
+          token: jwt.sign({sub: user._id}, masterKey, {expiresIn: "1d"})
+        }))
         .catch(err => res.json({
           status: "Error when registering user!",
           error: err
@@ -31,6 +34,9 @@ module.exports = {
       if (err)
         res.json({status: "Database error.", error: err});
 
+      if (!user)
+        return res.status(404).json({status: "No such user found!"});
+
       if (!bcrypt.compareSync(req.body.password, user.password))
         res.json({status: "Wrong credentials!"});
       else {
@@ -38,7 +44,8 @@ module.exports = {
         const token = jwt.sign(payload, masterKey, {expiresIn: "1d"});
         res.json({
           status: "Successfully logged in!",
-          token
+          token,
+          isAdmin: user.admin
         });
       }
     });
