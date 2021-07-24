@@ -11,6 +11,7 @@
     "@popperjs/core": "^2.9.2",
     "bootstrap": "^5.0.2",
     "core-js": "^3.6.5",
+    "validator": "^13.6.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"

@@ -10,7 +10,13 @@
             <router-link class="nav-link" active-class="active" to="/">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" active-class="active" to="/example">Example</router-link>
+            <router-link class="nav-link" active-class="active" to="/checkout">Checkout</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" active-class="active" to="/register">Register</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" active-class="active" to="/login">Login</router-link>
           </li>
         </ul>
       </div>
@@ -20,5 +26,11 @@
     <router-view/>
   </div>
 </template>
+
+<script>
+export default {
+
+}
+</script>
 
 <style lang="scss"></style>
