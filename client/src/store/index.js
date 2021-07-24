@@ -11,7 +11,7 @@ export default createStore({
       return state.products;
     },
     getCart(state) {
-      return state.cart;
+      return state.cart.sort((x, y) => x.name > y.name);
     },
     getCartSize(state) {
       let sum = 0;
