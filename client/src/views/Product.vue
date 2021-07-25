@@ -47,7 +47,7 @@ export default {
       this.$store.commit('addToCart');
     },
     remove() {
-      this.$store.commit('removeFromCart');
+      this.$store.commit('removeFromCart', this.$route.params.id);
     }
   }
 }

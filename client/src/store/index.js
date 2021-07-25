@@ -58,8 +58,8 @@ export default createStore({
           quantity: 1
         });
     },
-    removeFromCart(state) {
-      let foundProduct = state.cart.find(x => x.id == state.currentProduct._id);
+    removeFromCart(state, productId) {
+      let foundProduct = state.cart.find(x => x.id == productId);
       if (foundProduct) {
         foundProduct.quantity--;
         if (foundProduct.quantity == 0)

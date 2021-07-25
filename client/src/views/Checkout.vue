@@ -10,6 +10,7 @@
               <i>${{ item.price }}</i>
             </div>
             <span class="badge bg-primary rounded-pill">{{ item.quantity }}</span>
+            <span class="badge bg-danger rounded-pill ms-2" @click="remove(item.id)">x</span>
           </li>
         </ul>
         <p class="text-center my-3 fw-bold">You can buy {{ cartSize }} items for ${{ cartPrice }}.</p>
@@ -30,6 +31,11 @@ export default {
     },
     cartPrice() {
       return this.$store.getters.getCartPrice;
+    }
+  },
+  methods: {
+    remove(id) {
+      this.$store.commit('removeFromCart', id);
     }
   }
 }
