@@ -15,6 +15,8 @@
               <span class="badge bg-light rounded-pill text-dark" v-text="cartSize"></span>
             </router-link>
           </li>
+        </ul>
+        <ul class="navbar-nav mb-2 mb-lg-0">
           <li class="nav-item">
             <router-link class="nav-link" active-class="active" to="/register">Register</router-link>
           </li>
