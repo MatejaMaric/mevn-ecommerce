@@ -14,9 +14,10 @@
             <p class="card-text" v-text="curProduct.description"></p>
             <p class="card-text"><small class="text-muted">Amount: {{curProductQuantity}}</small></p>
           </div>
-          <div class="card-footer">
+          <div class="card-footer d-flex align-items-baseline">
             <div class="btn btn-dark" @click="buy">Add to cart</div>
             <div class="btn btn-secondary ms-3" v-show="curProductQuantity" @click="remove">Remove from cart</div>
+            <div class="btn btn-outline-secondary btn-sm ms-auto" @click="back">Go back</div>
           </div>
         </div>
 
@@ -48,6 +49,9 @@ export default {
     },
     remove() {
       this.$store.commit('removeFromCart', this.$route.params.id);
+    },
+    back() {
+      this.$router.back();
     }
   }
 }
