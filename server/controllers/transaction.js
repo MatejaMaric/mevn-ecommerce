@@ -127,6 +127,21 @@ module.exports = {
         res.status(500).json({status: "Couldn't update order in database!"})
         console.error(err);
       });
+  },
+
+  async showPaid(req, res) {
+    const orders = await Order.find({status: 'paid'});
+    let formattedResponse = [];
+
+    orders.forEach(order => {
+      formattedResponse.push({
+        shipping: order.shipping,
+        items: order.items,
+        updatedAt: order.updatedAt
+      });
+    });
+
+    res.json(formattedResponse);
   }
 
 };

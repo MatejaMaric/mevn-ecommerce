@@ -17,7 +17,8 @@ router.post('/products', isAuth, isAdmin, upload.single('image'), productsContro
 router.patch('/products/:id', isAuth, isAdmin, upload.single('image'), productsController.update);
 router.delete('/products/:id', isAuth, isAdmin, productsController.destroy);
 
-router.post('/transaction/setup', transactionController.setup);
-router.post('/transaction/capture', transactionController.capture);
+router.get('/transactions/paid', transactionController.showPaid);
+router.post('/transactions/setup', transactionController.setup);
+router.post('/transactions/capture', transactionController.capture);
 
 module.exports = router;

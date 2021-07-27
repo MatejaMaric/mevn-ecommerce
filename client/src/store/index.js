@@ -85,7 +85,7 @@ export default createStore({
       const checkoutRequest = {items: context.state.cart};
 
       const orderId = await axios
-        .post(`${process.env.VUE_APP_ROOT_API}/transaction/setup`, checkoutRequest)
+        .post(`${process.env.VUE_APP_ROOT_API}/transactions/setup`, checkoutRequest)
         .then(response => response.data.orderId)
         .catch(err => console.error(err));
 
@@ -93,7 +93,7 @@ export default createStore({
     },
     async captureOrder(context, orderId) {
       return await axios
-        .post(`${process.env.VUE_APP_ROOT_API}/transaction/capture`, {orderId})
+        .post(`${process.env.VUE_APP_ROOT_API}/transactions/capture`, {orderId})
         .then(() => true)
         .catch(err => console.error(err));
     }
