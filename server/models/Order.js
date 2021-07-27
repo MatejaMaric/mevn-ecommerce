@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 
+const ItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  name: {
+    type: String,
+    required: false
+  },
+  quantity: {
+    type: Number,
+    required: true
+  }
+}, {_id: false});
+
 const OrderSchema = new mongoose.Schema({
   status: {
     type: String,
@@ -14,16 +29,7 @@ const OrderSchema = new mongoose.Schema({
     required: false
   },
   items: {
-    type: [{
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-      },
-      quantity: {
-        type: Number,
-        required: true
-      }
-    }],
+    type: [ItemSchema],
     required: true
   },
   shipping: {
@@ -43,7 +49,7 @@ const OrderSchema = new mongoose.Schema({
     },
     required: false
   }
-});
+}, {timestamps: true});
 
 const OrderModel = new mongoose.model('Order', OrderSchema);
 
