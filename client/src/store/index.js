@@ -65,6 +65,9 @@ export default createStore({
         if (foundProduct.quantity == 0)
           state.cart = state.cart.filter(x => x.id != foundProduct.id);
       }
+    },
+    clearCart(state) {
+      state.cart.length = 0;
     }
   },
   actions: {

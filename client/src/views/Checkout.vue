@@ -20,16 +20,31 @@
       </div>
     </div>
   </div>
+  <Modal :title="modalTitle" v-if="showModal" @close="showModal = false">
+    <p v-text="modalText"></p>
+  </Modal>
 </template>
 
 <script>
+import Modal from '@/components/Modal.vue';
+
 export default {
   name: 'Checkout',
+  components: {
+    Modal
+  },
   mounted() {
     const script = document.createElement("script");
     script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.VUE_APP_PAYPAL_CLIENT_ID}&disable-funding=credit`;
     script.addEventListener("load", this.paypalLoaded);
     document.body.appendChild(script);
+  },
+  data() {
+    return {
+      showModal: false,
+      modalTitle: '',
+      modalText: ''
+    };
   },
   computed: {
     cart() {
@@ -48,6 +63,8 @@ export default {
     },
     paypalLoaded() {
       const dispatch = this.$store.dispatch;
+      const commit = this.$store.commit;
+      const thisVue = this;
 
       window.paypal.Buttons({
         async createOrder() {
@@ -55,12 +72,22 @@ export default {
         },
         async onApprove(data) {
           const success = await dispatch('captureOrder', data.orderID);
-          if (success === true)
-            console.log('Successfully paid!');
-          else
-            console.log('Capturing order failed!');
+          if (success === true) {
+            thisVue.modalTitle = 'Success!';
+            thisVue.modalText = 'Your purchase should arrive within 7 days!';
+            thisVue.showModal = true;
+            commit('clearCart');
+          }
+          else {
+            thisVue.modalTitle = 'Failure!';
+            thisVue.modalText = 'Your order was not successfully paid! Check your funds or try again later.';
+            thisVue.showModal = true;
+          }
         },
         onError(err) {
+          thisVue.modalTitle = 'Error!';
+          thisVue.modalText = 'Error occurred! Please try again later.';
+          thisVue.showModal = true;
           console.error(err);
         }
       }).render(this.$refs.paypal);
