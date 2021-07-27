@@ -66,6 +66,7 @@ module.exports = {
 
       newOrderObj.items.push({
         productId: itemId,
+        name: item.name,
         quantity: itemQuantity
       });
     }
