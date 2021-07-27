@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'Checkout',
   mounted() {
@@ -49,22 +47,18 @@ export default {
       this.$store.commit('removeFromCart', id);
     },
     paypalLoaded() {
-      const checkoutRequest = {items: this.$store.getters.getCart};
+      const dispatch = this.$store.dispatch;
 
       window.paypal.Buttons({
         async createOrder() {
-          const orderId = await axios
-            .post(`${process.env.VUE_APP_ROOT_API}/transaction/setup`, checkoutRequest)
-            .then(response => response.data.orderId)
-            .catch(err => console.error(err));
-
-          return orderId;
+          return await dispatch('createOrder');
         },
         async onApprove(data) {
-          await axios
-            .post(`${process.env.VUE_APP_ROOT_API}/transaction/capture`, {orderId: data.orderID})
-            .then(() => console.log('Paid successfully!'))
-            .catch(err => console.error(err));
+          const success = await dispatch('captureOrder', data.orderID);
+          if (success === true)
+            console.log('Successfully paid!');
+          else
+            console.log('Capturing order failed!');
         },
         onError(err) {
           console.error(err);
