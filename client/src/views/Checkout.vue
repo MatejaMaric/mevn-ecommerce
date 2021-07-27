@@ -15,7 +15,7 @@
         </ul>
         <p class="text-center my-3 fw-bold">You can buy {{ cartSize }} items for ${{ cartPrice }}.</p>
       </div>
-      <div class="col-md-4 card p-2">
+      <div class="col-md-4 card p-2" v-if="cartSize">
         <div ref="paypal"></div>
       </div>
     </div>
