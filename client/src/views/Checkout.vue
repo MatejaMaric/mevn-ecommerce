@@ -62,32 +62,32 @@ export default {
       this.$store.commit('removeFromCart', id);
     },
     paypalLoaded() {
-      const dispatch = this.$store.dispatch;
-      const commit = this.$store.commit;
-      const thisVue = this;
-
       window.paypal.Buttons({
-        async createOrder() {
-          return await dispatch('createOrder');
+        createOrder: async () => {
+          return await this.$store.dispatch('createOrder');
         },
-        async onApprove(data) {
-          const success = await dispatch('captureOrder', data.orderID);
+
+        onApprove: async (data) => {
+          const success = await this.$store.dispatch('captureOrder', data.orderID);
+
           if (success === true) {
-            thisVue.modalTitle = 'Success!';
-            thisVue.modalText = 'Your purchase should arrive within 7 days!';
-            thisVue.showModal = true;
-            commit('clearCart');
+            this.modalTitle = 'Success!';
+            this.modalText = 'Your purchase should arrive within 7 days!';
+            this.$store.commit('clearCart');
           }
           else {
-            thisVue.modalTitle = 'Failure!';
-            thisVue.modalText = 'Your order was not successfully paid! Check your funds or try again later.';
-            thisVue.showModal = true;
+            this.modalTitle = 'Failure!';
+            this.modalText = 'Your order was not successfully paid! Check your funds or try again later.';
           }
+
+          this.showModal = true;
         },
-        onError(err) {
-          thisVue.modalTitle = 'Error!';
-          thisVue.modalText = 'Error occurred! Please try again later.';
-          thisVue.showModal = true;
+
+        onError: (err) => {
+          this.modalTitle = 'Error!';
+          this.modalText = 'Error occurred! Please try again later.';
+          this.showModal = true;
+
           console.error(err);
         }
       }).render(this.$refs.paypal);
