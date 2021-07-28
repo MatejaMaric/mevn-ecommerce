@@ -3,7 +3,7 @@
     <div class="row d-flex justify-content-center">
       <div class="col-md-7">
         <div class="card px-5 py-4">
-          <div class="form-data" v-if="!submitted">
+          <div class="form-data">
 
             <div class="text-center mb-4">
               <h4>Register</h4>
@@ -41,15 +41,16 @@
               <div class="invalid-feedback">Password must be 8 character!</div>
             </div>
 
-            <div class="mb-3">
-              <button @click.stop.prevent="submit" class="btn btn-dark w-100">Register</button>
+            <div class="forms-inputs mb-4">
+              <span>Confirm Password</span>
+              <input type="password" v-model="passwordConfirm"
+                :class="{'form-control':true, 'is-invalid' : (password !== passwordConfirm) && passwordConfirmBlured}"
+                @blur="passwordConfirmBlured = true">
+              <div class="invalid-feedback">Passwords must match!</div>
             </div>
 
-          </div>
-          <div class="success-data" v-else>
-
-            <div class="text-center d-flex flex-column">
-              <span class="text-center">You have been successfully registered!</span>
+            <div class="mb-3">
+              <button @click.stop.prevent="submit" class="btn btn-dark w-100">Register</button>
             </div>
 
           </div>
@@ -57,17 +58,23 @@
       </div>
     </div>
   </div>
+  <Modal :title="modalTitle" v-if="showModal" @close="showModal = false">
+    <p v-text="modalText"></p>
+  </Modal>
 </template>
 
 <script>
 import validator from 'validator';
+import Modal from '@/components/Modal.vue';
 
 export default {
   name: 'Register',
+  components: {
+    Modal
+  },
   data() {
     return {
       valid : false,
-      submitted : false,
       firstname: "",
       firstnameBlured: false,
       lastname: "",
@@ -76,6 +83,11 @@ export default {
       emailBlured : false,
       password:"",
       passwordBlured:false,
+      passwordConfirm:"",
+      passwordConfirmBlured:false,
+      showModal: false,
+      modalTitle: '',
+      modalText: ''
     }
   },
   methods: {
@@ -84,8 +96,14 @@ export default {
       this.lastnameBlured = true;
       this.emailBlured = true;
       this.passwordBlured = true;
-      if (this.validName(this.firstname) && this.validName(this.lastname) && this.validEmail(this.email) && this.validPassword(this.password)) {
+      this.passwordConfirmBlured = true;
+      if (this.validName(this.firstname) && this.validName(this.lastname)
+          && this.validEmail(this.email) && this.validPassword(this.password)
+          && this.password === this.passwordConfirm) {
         this.valid = true;
+      }
+      else {
+        this.valid = false;
       }
     },
 
@@ -97,7 +115,14 @@ export default {
     submit() {
       this.validate();
       if (this.valid) {
-        this.submitted = true;
+        this.modalTitle = 'Success!';
+        this.modalText = 'You successfully registered!';
+        this.showModal = true;
+      }
+      else {
+        this.modalTitle = 'Failure!';
+        this.modalText = 'You failed to register.';
+        this.showModal = true;
       }
     }
   }

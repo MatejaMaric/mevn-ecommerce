@@ -32,20 +32,30 @@
       </div>
     </div>
   </div>
+  <Modal :title="modalTitle" v-if="showModal" @close="showModal = false">
+    <p v-text="modalText"></p>
+  </Modal>
 </template>
 
 <script>
 import validator from 'validator';
+import Modal from '@/components/Modal.vue';
 
 export default {
   name: 'Login',
+  components: {
+    Modal
+  },
   data() {
     return {
       valid: false,
       email: "",
       emailBlured : false,
       password: "",
-      passwordBlured:false
+      passwordBlured:false,
+      showModal: false,
+      modalTitle: '',
+      modalText: ''
     }
   },
   methods: {
@@ -58,12 +68,22 @@ export default {
       if (this.validEmail(this.email) && this.validPassword(this.password)) {
         this.valid = true;
       }
+      else {
+        this.valid = false;
+      }
     },
 
     login() {
       this.validate();
       if (this.valid) {
-        alert('Successfully logged in!');
+        this.modalTitle = 'Success!';
+        this.modalText = 'You successfully logged in!';
+        this.showModal = true;
+      }
+      else {
+        this.modalTitle = 'Failure!';
+        this.modalText = 'You failed to login.';
+        this.showModal = true;
       }
     }
   }
