@@ -16,7 +16,10 @@
         <p class="text-center my-3 fw-bold">You can buy {{ cartSize }} items for ${{ cartPrice }}.</p>
       </div>
       <div class="col-md-4 card p-2" v-if="cartSize">
-        <div ref="paypal"></div>
+        <div ref="paypal" v-if="isLoggedIn"></div>
+        <p v-else class="fw-bold text-center my-auto">
+          You need to be logged in to make a purchase.
+        </p>
       </div>
     </div>
   </div>
@@ -55,6 +58,9 @@ export default {
     },
     cartPrice() {
       return this.$store.getters.getCartPrice;
+    },
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
     }
   },
   methods: {

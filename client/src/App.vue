@@ -17,12 +17,17 @@
             </router-link>
           </li>
         </ul>
-        <ul class="navbar-nav mb-2 mb-lg-0">
+        <ul class="navbar-nav mb-2 mb-lg-0" v-if="!isLoggedIn">
           <li class="nav-item">
             <router-link class="nav-link" active-class="active" to="/register">Register</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" active-class="active" to="/login">Login</router-link>
+          </li>
+        </ul>
+        <ul class="navbar-nav mb-2 mb-lg-0" v-else>
+          <li class="nav-item">
+            <span class="nav-link" @click="logout">Logout</span>
           </li>
         </ul>
       </div>
@@ -34,11 +39,29 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'Checkout',
+  name: 'App',
+  created() {
+    axios.interceptors.response.use(undefined, error => {
+      if (error.status === 401) {
+        this.$store.commit('auth_clean');
+      }
+      return Promise.reject(error);
+    });
+  },
   computed: {
     cartSize() {
       return this.$store.getters.getCartSize;
+    },
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.commit('auth_clean');
     }
   }
 }

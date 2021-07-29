@@ -5,7 +5,9 @@ export default createStore({
   state: {
     products: [],
     currentProduct: {},
-    cart: []
+    cart: [],
+    token: localStorage.getItem('token') || '',
+    isAdmin: localStorage.getItem('isAdmin') === 'true'
   },
   getters: {
     getProducts(state) {
@@ -37,6 +39,12 @@ export default createStore({
           amount = x.quantity;
       });
       return amount;
+    },
+    isLoggedIn(state) {
+      return !!state.token;
+    },
+    isAdmin(state) {
+      return state.isAdmin;
     }
   },
   mutations: {
@@ -68,6 +76,20 @@ export default createStore({
     },
     clearCart(state) {
       state.cart.length = 0;
+    },
+    auth_set(state, token, isAdmin) {
+      state.token = token;
+      state.isAdmin = isAdmin;
+      localStorage.setItem('token', token);
+      localStorage.setItem('isAdmin', isAdmin);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    },
+    auth_clean(state) {
+      state.token = null;
+      state.isAdmin = false;
+      localStorage.removeItem('token');
+      localStorage.removeItem('isAdmin');
+      delete axios.defaults.headers.common['Authorization'];
     }
   },
   actions: {
@@ -96,6 +118,26 @@ export default createStore({
         .post(`${process.env.VUE_APP_ROOT_API}/transactions/capture`, {orderId})
         .then(() => true)
         .catch(err => console.error(err));
+    },
+    login(context, loginData) {
+      return new Promise((resolve, reject) => {
+        axios.post(`${process.env.VUE_APP_ROOT_API}/login`, loginData)
+          .then(response => {
+            context.commit('auth_set', response.data.token, response.data.isAdmin);
+            resolve(response);
+          })
+          .catch(error => reject(error));
+      });
+    },
+    register(context, registerData) {
+      return new Promise((resolve, reject) => {
+        axios.post(`${process.env.VUE_APP_ROOT_API}/register`, registerData)
+          .then(response => {
+            context.commit('auth_set', response.data.token, response.data.isAdmin);
+            resolve(response);
+          })
+          .catch(error => reject(error));
+      });
     }
   },
   modules: {

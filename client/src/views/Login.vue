@@ -32,7 +32,7 @@
       </div>
     </div>
   </div>
-  <Modal :title="modalTitle" v-if="showModal" @close="showModal = false">
+  <Modal :title="modalTitle" v-if="showModal" @close="closeBtnAction">
     <p v-text="modalText"></p>
   </Modal>
 </template>
@@ -55,7 +55,8 @@ export default {
       passwordBlured:false,
       showModal: false,
       modalTitle: '',
-      modalText: ''
+      modalText: '',
+      closeBtnAction: null
     }
   },
   methods: {
@@ -75,15 +76,33 @@ export default {
 
     login() {
       this.validate();
-      if (this.valid) {
+
+      const successMsg = () => {
         this.modalTitle = 'Success!';
         this.modalText = 'You successfully logged in!';
         this.showModal = true;
-      }
-      else {
+        this.closeBtnAction = () => this.$router.push('/');
+      };
+
+      const failureMsg = () => {
         this.modalTitle = 'Failure!';
         this.modalText = 'You failed to login.';
         this.showModal = true;
+        this.closeBtnAction = () => this.showModal = false;
+      };
+
+      if (this.valid) {
+        const requestData = {
+          email: this.email,
+          password: this.password
+        };
+
+        this.$store.dispatch('login', requestData)
+          .then(() => successMsg())
+          .catch(() => failureMsg());
+      }
+      else {
+        failureMsg();
       }
     }
   }

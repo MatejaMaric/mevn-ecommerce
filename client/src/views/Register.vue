@@ -58,7 +58,7 @@
       </div>
     </div>
   </div>
-  <Modal :title="modalTitle" v-if="showModal" @close="showModal = false">
+  <Modal :title="modalTitle" v-if="showModal" @close="closeBtnAction">
     <p v-text="modalText"></p>
   </Modal>
 </template>
@@ -87,7 +87,8 @@ export default {
       passwordConfirmBlured:false,
       showModal: false,
       modalTitle: '',
-      modalText: ''
+      modalText: '',
+      closeBtnAction: null
     }
   },
   methods: {
@@ -114,15 +115,36 @@ export default {
 
     submit() {
       this.validate();
-      if (this.valid) {
+
+      const successMsg = () => {
         this.modalTitle = 'Success!';
         this.modalText = 'You successfully registered!';
         this.showModal = true;
-      }
-      else {
+        this.closeBtnAction = () => this.$router.push('/');
+      };
+
+      const failureMsg = () => {
         this.modalTitle = 'Failure!';
         this.modalText = 'You failed to register.';
         this.showModal = true;
+        this.closeBtnAction = () => this.showModal = false;
+      };
+
+      if (this.valid) {
+        const requestData = {
+          firstname: this.firstname,
+          lastname: this.lastname,
+          email: this.email,
+          password: this.password,
+          confirmPassword: this.passwordConfirm,
+        };
+
+        this.$store.dispatch('register', requestData)
+          .then(() => successMsg())
+          .catch(() => failureMsg());
+      }
+      else {
+        failureMsg();
       }
     }
   }
