@@ -10,6 +10,7 @@ module.exports = {
     let newOrderObj = {
       status: 'ordered',
       paypalOrderId: null,
+      userId: req.user._id,
       items: []
     };
     let transactionSetupData = {
@@ -106,6 +107,9 @@ module.exports = {
     }
     if (!dbOrder)
       return res.status(400).json({status: "Couldn't find given order in database!"});
+
+    if (!dbOrder.userId.equals(req.user._id))
+      return res.sendStatus(403);
 
     const request = new paypal.orders.OrdersCaptureRequest(req.body.orderId);
     request.requestBody({});
