@@ -27,6 +27,9 @@
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0" v-else>
           <li class="nav-item">
+            <router-link class="nav-link" active-class="active" to="/orders">Orders</router-link>
+          </li>
+          <li class="nav-item">
             <span class="nav-link" @click="logout">Logout</span>
           </li>
         </ul>

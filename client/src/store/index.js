@@ -7,7 +7,8 @@ export default createStore({
     currentProduct: {},
     cart: [],
     token: localStorage.getItem('token') || '',
-    isAdmin: localStorage.getItem('isAdmin') === 'true'
+    isAdmin: localStorage.getItem('isAdmin') === 'true',
+    userOrders: []
   },
   getters: {
     getProducts(state) {
@@ -45,6 +46,9 @@ export default createStore({
     },
     isAdmin(state) {
       return state.isAdmin;
+    },
+    getUserOrders(state) {
+      return state.userOrders;
     }
   },
   mutations: {
@@ -90,6 +94,9 @@ export default createStore({
       localStorage.removeItem('token');
       localStorage.removeItem('isAdmin');
       delete axios.defaults.headers.common['Authorization'];
+    },
+    setUserOrders(state, orders) {
+      state.userOrders = orders;
     }
   },
   actions: {
@@ -134,6 +141,16 @@ export default createStore({
         axios.post(`${process.env.VUE_APP_ROOT_API}/register`, registerData)
           .then(response => {
             context.commit('auth_set', response.data.token, response.data.isAdmin);
+            resolve(response);
+          })
+          .catch(error => reject(error));
+      });
+    },
+    pullUserOrders(context) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_ROOT_API}/transactions/personal`)
+          .then(response => {
+            context.commit('setUserOrders', response.data);
             resolve(response);
           })
           .catch(error => reject(error));

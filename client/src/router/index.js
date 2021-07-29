@@ -4,6 +4,7 @@ import Product from '@/views/Product.vue';
 import Checkout from '@/views/Checkout.vue';
 import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
+import Orders from '@/views/Orders';
 
 import store from '@/store/index';
 
@@ -37,6 +38,14 @@ const routes = [
     component: Register,
     meta: {
       guest: true
+    }
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: Orders,
+    meta: {
+      auth: true
     }
   }
 ];
