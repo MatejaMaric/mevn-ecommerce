@@ -25,7 +25,7 @@ module.exports = {
     const newProduct = new Product(newProductObj);
     newProduct.save()
       .then(() => res.json({status: "Product successfully added!"}))
-      .catch(error => res.json({
+      .catch(error => res.status(400).json({
         status: "Couldn't add product!",
         error
       }));
@@ -44,7 +44,7 @@ module.exports = {
 
     Product.findOneAndUpdate({_id: req.params.id}, {$set: updatedProduct}, {new: true}, (error, product) => {
       if (error)
-        res.json({status: "Couldn't update product!", error});
+        res.status(400).json({status: "Couldn't update product!", error});
       else
         res.json({status: "Successfully updated product!", product});
     });
@@ -53,7 +53,7 @@ module.exports = {
   destroy(req, res) {
     Product.findByIdAndRemove(req.params.id, (error, product) => {
       if (error)
-        res.json({status: "Error when removing product!", error});
+        res.status(400).json({status: "Error when removing product!", error});
       else
         res.json({status: "Product successfully removed!", product})
     });
