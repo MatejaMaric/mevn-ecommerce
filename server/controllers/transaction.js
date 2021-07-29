@@ -135,17 +135,12 @@ module.exports = {
 
   async showPaid(req, res) {
     const orders = await Order.find({status: 'paid'});
-    let formattedResponse = [];
+    res.json(orders);
+  },
 
-    orders.forEach(order => {
-      formattedResponse.push({
-        shipping: order.shipping,
-        items: order.items,
-        updatedAt: order.updatedAt
-      });
-    });
-
-    res.json(formattedResponse);
+  async showPaidByUser(req, res) {
+    const orders = await Order.find({status: 'paid', userId: req.user._id});
+    res.json(orders);
   }
 
 };
