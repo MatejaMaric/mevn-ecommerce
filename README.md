@@ -12,3 +12,12 @@ Implementation informations:
 - Full login and registration system.
 - Full cart system.
 - User can see their previous orders on front end.
+
+## How to run this project:
+
+- Copy `client/.env` to `client/.env.local`.
+- Copy `server/.env.example` to `server/.env`.
+- Client's environment variable `VUE_APP_ROOT_API` should match server's `SITE_URL`.
+- On server environment variables `SITE_URL` and `PORT` should be compatible.
+- Navigate to `client` and run `npm run serve`.
+- Navigate to `server` and run `npm run start`.
