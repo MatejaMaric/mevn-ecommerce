@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-5">
+  <div class="mt-5 mb-1 mx-3">
     <div class="row d-flex justify-content-center">
       <div class="col-md-6 card">
         <ul class="list-group list-group-flush">

@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card mb-3">
     <img :src="ImgLink" class="card-img-top">
     <div class="card-body">
       <h5 class="card-title">{{ Name }}</h5>

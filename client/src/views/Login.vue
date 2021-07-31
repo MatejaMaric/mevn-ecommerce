@@ -2,7 +2,8 @@
   <div class="mt-5">
     <div class="row d-flex justify-content-center">
       <div class="col-md-7">
-        <div class="card px-5 py-4">
+        <div class="card px-5 py-4 mb-3">
+          <form>
 
           <div class="text-center mb-4">
             <h4>Login</h4>
@@ -25,9 +26,10 @@
           </div>
 
           <div class="forms-inputs mb-4">
-            <button @click.stop.prevent="login" class="btn btn-dark w-100">Login</button>
+            <input type="submit" value="Submit" class="btn btn-dark w-100" @click.stop.prevent="login">
           </div>
 
+          </form>
         </div>
       </div>
     </div>
